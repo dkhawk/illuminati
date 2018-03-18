@@ -1,15 +1,14 @@
 package com.maladjustedmoose.illuminati;
 
 import android.app.Activity;
-import android.app.Application;
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
-import dagger.android.HasActivityInjector;
+import dagger.android.support.DaggerApplication;
+
 import javax.inject.Inject;
 
 // IlluminatiApplication.java
-// Could also extend DaggerApplication instead of implementing HasActivityInjector
-public class IlluminatiApplication extends Application implements HasActivityInjector {
+public class IlluminatiApplication extends DaggerApplication {
 
 //  @Inject
 //  AppDependency appDependency;
@@ -20,11 +19,10 @@ public class IlluminatiApplication extends Application implements HasActivityInj
   @Override
   public void onCreate() {
     super.onCreate();
-    DaggerAppComponent.create().inject(this);
   }
 
   @Override
-  public AndroidInjector<Activity> activityInjector() {
-    return activityInjector;
+  protected AndroidInjector<? extends DaggerApplication> applicationInjector() {
+    return DaggerAppComponent.builder().application(this).build();
   }
 }
