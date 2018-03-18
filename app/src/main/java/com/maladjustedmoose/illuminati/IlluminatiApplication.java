@@ -7,11 +7,7 @@ import dagger.android.support.DaggerApplication;
 
 import javax.inject.Inject;
 
-// IlluminatiApplication.java
 public class IlluminatiApplication extends DaggerApplication {
-
-//  @Inject
-//  AppDependency appDependency;
 
   @Inject
   DispatchingAndroidInjector<Activity> activityInjector;

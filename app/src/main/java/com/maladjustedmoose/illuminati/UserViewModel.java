@@ -27,4 +27,9 @@ class UserViewModel extends ViewModel {
   LiveData<User> getUser() {
     return user;
   }
+
+  public LiveData<User> getUser(String userId) {
+    user = userRepository.getUser(userId);
+    return user;
+  }
 }

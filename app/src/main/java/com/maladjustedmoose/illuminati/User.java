@@ -15,6 +15,8 @@ abstract class User {
 
   public abstract long networth();
 
+  public abstract int imageResourceId();
+
   @AutoValue.Builder
   abstract static class Builder {
     abstract Builder setUserId(String userId);
@@ -22,6 +24,8 @@ abstract class User {
     abstract Builder setName(String name);
 
     abstract Builder setNetworth(long networth);
+
+    abstract Builder setImageResourceId(int imageId);
 
     abstract User build();
   }

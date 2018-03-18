@@ -4,7 +4,6 @@ import dagger.Module;
 import dagger.android.AndroidInjectionModule;
 import dagger.android.ContributesAndroidInjector;
 
-// MainActivityModule.java
 @Module
 interface MainActivityModule {
   @PerFragment

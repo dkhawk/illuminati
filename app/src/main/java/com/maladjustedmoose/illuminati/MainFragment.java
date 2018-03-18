@@ -1,40 +1,72 @@
 package com.maladjustedmoose.illuminati;
 
 import android.app.Activity;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.Toast;
+
+import javax.inject.Inject;
+
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.AndroidSupportInjection;
 import dagger.android.support.HasSupportFragmentInjector;
-import javax.inject.Inject;
 
-// MainFragment.java
 // Could also extend DaggerFragment instead of implementing HasFragmentInjector
 // Could instead extend DialogFragment to add DialogFragment capabilities.
 // DialogFragments may be embedded as regular fragments in a view of an Activity or Fragment
 // and may also be shown as a dialog or in an alert dialog.
 public final class MainFragment extends Fragment implements HasSupportFragmentInjector {
+  static final String UID_KEY = "uid";
 
-//  @Inject
-//  AppDependency appDependency; // same object from IlluminatiApplication
-
-//  @Inject
-//  ActivityDependency activityDependency; // same object from MainActivity
-
-//  @Inject
-//  FragmentDependency fragmentDependency;
+  @Inject
+  IlluminatiViewModelFactory mViewModelFactory;
 
   @Inject
   DispatchingAndroidInjector<Fragment> childFragmentInjector;
+  private UserViewModel viewModel;
+  private LiveData<User> user;
+
+  static MainFragment create(String userId) {
+    MainFragment fragment = new MainFragment();
+    Bundle args = new Bundle();
+    args.putString(UID_KEY, userId);
+    fragment.setArguments(args);
+    return fragment;
+  }
+
+  @Override
+  public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+    super.onActivityCreated(savedInstanceState);
+    Bundle args = getArguments();
+    if (args != null && args.containsKey(UID_KEY)) {
+      String userId = args.getString(UID_KEY);
+      viewModel = ViewModelProviders.of(this, mViewModelFactory)
+          .get(UserViewModel.class);
+      viewModel.init(userId);
+
+      user = viewModel.getUser();
+      if (user != null) {
+        user.observe(this, this::onUserReady);
+      }
+    }
+  }
+
+  private void onUserReady(User user) {
+    Toast.makeText(getContext(), "User is " + user.name(), Toast.LENGTH_SHORT).show();
+    ImageView imageView = getView().findViewById(R.id.user_image);
+    imageView.setImageResource(user.imageResourceId());
+  }
 
   @Override
   public void onAttach(Context context) {
@@ -61,22 +93,16 @@ public final class MainFragment extends Fragment implements HasSupportFragmentIn
   }
 
   @Override
-  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
-
-    if (savedInstanceState == null) {
-      addChildFragment(R.id.child_fragment_container, new MainChildFragment());
-    }
-  }
-
-  private void addChildFragment(int containerID, Fragment fragment) {
-    FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-    transaction.replace(containerID, fragment);
-    transaction.commit();
-  }
-
-  @Override
   public AndroidInjector<Fragment> supportFragmentInjector() {
     return childFragmentInjector;
+  }
+
+  public void setUserId(String userId) {
+    getArguments().putString(UID_KEY, userId);
+    if (user != null) {
+      user.removeObservers(this);
+    }
+    user = viewModel.getUser(userId);
+    user.observe(this, this::onUserReady);
   }
 }

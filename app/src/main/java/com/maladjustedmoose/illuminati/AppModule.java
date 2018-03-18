@@ -1,14 +1,16 @@
 package com.maladjustedmoose.illuminati;
 
+import android.app.Application;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
+import android.content.Context;
+
 import dagger.Binds;
 import dagger.Module;
 import dagger.android.AndroidInjectionModule;
 import dagger.android.ContributesAndroidInjector;
 import javax.inject.Singleton;
 
-// AppModule.java
 @Module(includes = AndroidInjectionModule.class)
 interface AppModule {
   @PerActivity
@@ -19,8 +21,7 @@ interface AppModule {
   MainActivity mainActivityInjector();
 
   @Binds
-  ViewModelProvider.Factory provideListIssuesViewModelFactory(
-      IlluminatiViewModelFactory factory);
+  ViewModelProvider.Factory provideIlluminatiViewModelFactory(IlluminatiViewModelFactory factory);
 
   @Binds
   @Singleton
@@ -28,4 +29,7 @@ interface AppModule {
 
   @Binds
   ViewModel provideListIssuesViewModel(UserViewModel viewModel);
+
+  @Binds
+  abstract Context bindContext(Application application);
 }
