@@ -20,13 +20,13 @@ import javax.inject.Inject;
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.AndroidSupportInjection;
-import dagger.android.support.HasSupportFragmentInjector;
+import dagger.android.support.DaggerFragment;
 
 // Could also extend DaggerFragment instead of implementing HasFragmentInjector
 // Could instead extend DialogFragment to add DialogFragment capabilities.
 // DialogFragments may be embedded as regular fragments in a view of an Activity or Fragment
 // and may also be shown as a dialog or in an alert dialog.
-public final class MainFragment extends Fragment implements HasSupportFragmentInjector {
+public final class MainFragment extends DaggerFragment {
   static final String UID_KEY = "uid";
 
   @Inject
