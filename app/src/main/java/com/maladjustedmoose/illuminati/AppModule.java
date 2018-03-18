@@ -28,7 +28,7 @@ interface AppModule {
   UserRepository providesUserRepository(UserRepositoryFake repo);
 
   @Binds
-  ViewModel provideListIssuesViewModel(UserViewModel viewModel);
+  ViewModel provideUserViewModel(UserViewModel viewModel);
 
   @Binds
   abstract Context bindContext(Application application);
